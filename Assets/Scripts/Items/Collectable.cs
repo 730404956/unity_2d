@@ -1,0 +1,61 @@
+using UnityEngine;
+using UnityEngine.Events;
+using System;
+[RequireComponent(typeof(Collider2D))]
+public class Collectable : MonoBehaviour
+{
+    public bool auto_collect = false;
+    public OnCollectEvent OnCollect;
+    [SerializeField]
+    protected int ready_for_collect = 0;
+    new protected Collider2D collider;
+    private void Start()
+    {
+        collider = this.GetComponent<Collider2D>();
+        Init();
+    }
+    public void Init()
+    {
+        print("Collectable " + gameObject + " init");
+        gameObject.SetActive(true);
+    }
+    public void CollectBy(IBackpack backpack)
+    {
+        print(gameObject + " collect by " + backpack);
+        OnCollect?.Invoke(this,backpack);
+        gameObject.SetActive(false);
+    }
+    private void OnTriggerStay2D(Collider2D other)
+    {
+        if (auto_collect)
+        {
+            Actor actor = other.gameObject.GetComponent<Actor>();
+            if (actor != null)
+            {
+                CollectBy(actor.GetBackpack());
+            }
+        }
+        else
+        if (InputManager.GetCollectDown())
+        {
+            Actor actor = other.gameObject.GetComponent<Actor>();
+            if (actor != null)
+            {
+                CollectBy(actor.GetBackpack());
+            }
+        }
+    }
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+
+    }
+    private void OnTriggerExit2D(Collider2D other)
+    {
+
+    }
+    public void Init(Vector2 pos)
+    {
+        transform.position = pos;
+        Init();
+    }
+}
