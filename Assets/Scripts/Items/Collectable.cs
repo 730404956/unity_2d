@@ -1,6 +1,8 @@
 using UnityEngine;
 using UnityEngine.Events;
 using System;
+[Serializable]
+public class OnCollectEvent : UnityEvent<Collectable, IBackpack> { }
 [RequireComponent(typeof(Collider2D))]
 public class Collectable : MonoBehaviour
 {

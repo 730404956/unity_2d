@@ -3,33 +3,45 @@ using UnityEngine.UI;
 using System;
 using System.Collections.Generic;
 using UnityEngine.Events;
-
-public class Item : MonoBehaviour
+[Serializable]
+public class ItemEvent : UnityEvent<Item, IBackpack> { };
+public interface Item
+{
+    void ShowInfo();
+    string GetName();
+    string GetDescription();
+    string GetAttribute();
+    Image GetImage();
+    List<ItemOperation> GetOperations();
+    void SetUIPos(Transform t);
+}
+public class BaseItem : MonoBehaviour, Item
 {
     protected string id;
     public Collectable collectable;
     public string item_name;
     public string description;
+    [Tooltip("please set this component in inspector")]
     public Image image;
-    public string attr;
+    [SerializeField]
+    protected string attr;
     public List<ItemOperation> operations;
     public void ShowInfo()
     {
         GameManager.instance.backPackUI.ShowItemInfo(this);
-        print("show item info");
     }
     public void CollectItem(IBackpack backpack)
     {
         backpack.AddItem(this);
-        gameObject.SetActive(true);
     }
-    public void SetPos(RectTransform tf)
+
+    public void SetUIPos(Transform tf)
     {
         if (tf)
         {
-            gameObject.SetActive(true);
             transform.SetParent(tf);
             transform.localPosition = Vector2.zero;
+            gameObject.SetActive(true);
         }
         else
         {
@@ -39,7 +51,7 @@ public class Item : MonoBehaviour
     public virtual void DropItem(IBackpack backpack)
     {
         backpack.RemoveItem(this);
-        collectable.Init(backpack.GetPosition());
+        collectable.Init(backpack.GetTransform().position);
     }
     //***********************************rewrite
     public void CollectItem(Collectable collectable, IBackpack backpack)
@@ -58,6 +70,13 @@ public class Item : MonoBehaviour
     {
 
     }
+    //********************************************impl
+    public string GetDescription() { return description; }
+    public string GetName() { return item_name; }
+    public virtual string GetAttribute() { return attr; }
+    public Image GetImage() { return image; }
+    public List<ItemOperation> GetOperations() { return operations; }
+
 }
 [Serializable]
 public class ItemOperation

@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.Events;
-public class EquipmentItem : Item
+public class EquipmentItem : BaseItem
 {
     public Equipment equipment;
     private ItemOperation op_equip, op_takeoff;

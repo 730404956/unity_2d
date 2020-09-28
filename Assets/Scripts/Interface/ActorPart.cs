@@ -34,8 +34,8 @@ public class ActorPart : MonoBehaviour, IActorPart
     public int GetLayer() {
         return gameObject.layer;
     }
-    public Vector2 GetPosition() {
-        return transform.position;
+    public Transform GetTransform() {
+        return transform;
     }
     public IController GetController() {
         return controller;

@@ -30,7 +30,7 @@ public class EquipmentGear : ActorPart, IEquipmentGear
             if (slot.isEmpty && slot.type == equipment.type)
             {
                 equipment.OnEquip(this);
-                onEquip.Invoke(equipment, this);
+                onEquip.Invoke(equipment);
                 slot.SetEquipment(equipment);
                 print("equip to empty pos");
                 return;
@@ -42,7 +42,7 @@ public class EquipmentGear : ActorPart, IEquipmentGear
             {
                 print("change equipment");
                 equipment.OnEquip(this);
-                onEquip.Invoke(equipment, this);
+                onEquip.Invoke(equipment);
                 slot.SetEquipment(equipment);
                 return;
             }
@@ -55,8 +55,8 @@ public class EquipmentGear : ActorPart, IEquipmentGear
             if (slot.m_equipment == equipment)
             {
                 slot.Clear();
-                equipment.OnTakeOff(this);
-                OnTakeOff.Invoke(equipment, this);
+                OnTakeOff.Invoke(equipment);
+                equipment.OnTakeOff();
             }
         }
     }
@@ -83,19 +83,19 @@ public class EquipmentGear : ActorPart, IEquipmentGear
         return String.EquipSlotName.None;
     }
     //******************************impl
-    public void AddOnEquipListener(UnityAction<Equipment, IEquipmentGear> listener)
+    public void AddOnEquipListener(UnityAction<Equipment> listener)
     {
         onEquip.AddListener(listener);
     }
-    public void RemoveOnEquipListener(UnityAction<Equipment, IEquipmentGear> listener)
+    public void RemoveOnEquipListener(UnityAction<Equipment> listener)
     {
         onEquip.RemoveListener(listener);
     }
-    public void AddOnTakeOffListener(UnityAction<Equipment, IEquipmentGear> listener)
+    public void AddOnTakeOffListener(UnityAction<Equipment> listener)
     {
         OnTakeOff.AddListener(listener);
     }
-    public void RemoveOnTakeOffListener(UnityAction<Equipment, IEquipmentGear> listener)
+    public void RemoveOnTakeOffListener(UnityAction<Equipment> listener)
     {
         OnTakeOff.RemoveListener(listener);
     }

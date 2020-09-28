@@ -7,23 +7,21 @@ public class BackpackUI : UIBase
     public ItemInfoPanel panel;
     [SerializeField]
     protected Transform content;
-    public void Start()
+    protected void Start()
     {
         foreach (Item item in backpack.GetItems())
         {
-            item.transform.SetParent(content);
+            item.SetUIPos(content);
         }
     }
     public virtual void AddNewItem(Item item, IBackpack backpack)
     {
-        item.transform.SetParent(content);
-        item.gameObject.SetActive(true);
+        item.SetUIPos(content);
 
     }
     public virtual void RemoveItem(Item item, IBackpack backpack)
     {
-        item.transform.SetParent(null);
-        item.gameObject.SetActive(false);
+        item.SetUIPos(null);
     }
     public virtual void ShowItemInfo(Item item)
     {
@@ -32,7 +30,10 @@ public class BackpackUI : UIBase
     }
     public void SetUp(Actor actor)
     {
+        backpack?.RemoveOnAddItemListener(AddNewItem);
+        backpack?.RemoveOnRemoveItemListener(RemoveItem);
         backpack = actor.GetBackpack();
+        Start();
         backpack.AddOnAddItemListener(AddNewItem);
         backpack.AddOnRemoveItemListener(RemoveItem);
         gearUI.SetUp(actor.GetGear());

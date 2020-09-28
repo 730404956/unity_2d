@@ -8,7 +8,7 @@ public class Amor : Equipment
     public float percentage_damage_decrease = 0;
     private void Start()
     {
-        onEquip.AddListener((equipment,gear) =>
+        onEquip.AddListener((equipment) =>
         {
             EquipmentGear equipmentGear= gear.GetGear() as EquipmentGear;
             Damageable damageable= equipmentGear.GetComponent<Damageable>();

@@ -14,7 +14,8 @@
 using UnityEngine;
 using UnityEngine.Events;
 using System;
-
+[Serializable]
+public class EquipmentEvent : UnityEvent<Equipment> { };
 
 public abstract class Equipment : MonoBehaviour
 {
@@ -22,7 +23,7 @@ public abstract class Equipment : MonoBehaviour
     protected EquipmentEvent onEquip, onTakeOff;
     public EquipmentType type;
     public IEquipmentGear gear;
-    public Item item;
+    public EquipmentItem item;
 
     /// <summary>
     /// trigger when take on equipment
@@ -31,14 +32,14 @@ public abstract class Equipment : MonoBehaviour
     {
         gameObject.SetActive(true);
         this.gear = gear;
-        onEquip.Invoke(this, gear);
+        onEquip.Invoke(this);
     }
     /// <summary>
     /// trigger when take off equipment
     /// </summary>
-    public virtual void OnTakeOff(IEquipmentGear gear)
+    public virtual void OnTakeOff()
     {
-        onTakeOff.Invoke(this, gear);
+        onTakeOff.Invoke(this);
         this.gear = null;
         gameObject.SetActive(false);
 
@@ -53,15 +54,6 @@ public abstract class Equipment : MonoBehaviour
             return true;
         }
         print("bind model success.");
-        return false;
-    }
-    public bool BindUI(RectTransform tf)
-    {
-        if (item != null && tf != null)
-        {
-            item.SetPos(tf);
-            return true;
-        }
         return false;
     }
 }

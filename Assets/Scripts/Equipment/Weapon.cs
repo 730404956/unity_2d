@@ -16,23 +16,23 @@ using UnityEngine;
 [RequireComponent(typeof(Moveable))]
 public class Weapon : Equipment
 {
-    public EquipmentEvent OnWeaponUse, OnWeaponUseFinish;
+    protected EquipmentEvent OnWeaponUse, OnWeaponUseFinish;
     public virtual void Use()
     {
-        OnWeaponUse?.Invoke(this, gear);
+        OnWeaponUse?.Invoke(this);
     }
     public virtual void FinishUsing()
     {
-        OnWeaponUseFinish?.Invoke(this, gear);
+        OnWeaponUseFinish?.Invoke(this);
     }
     /// <summary>
     /// call when remove from weapon library
     /// unbind energy_bar
     /// </summary>
     /// <param name="gear"></param>
-    public override void OnTakeOff(IEquipmentGear gear)
+    public override void OnTakeOff()
     {
         FinishUsing();
-        base.OnTakeOff(gear);
+        base.OnTakeOff();
     }
 }

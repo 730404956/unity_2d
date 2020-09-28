@@ -2,7 +2,7 @@ using UnityEngine;
 using System;
 using UnityEngine.Events;
 [RequireComponent(typeof(Moveable))]
-public class Projectile : MonoBehaviour
+public class Projectile : Damager
 {
     [Serializable]
     public class OnHitEvent : UnityEvent<GameObject> { };
@@ -13,19 +13,18 @@ public class Projectile : MonoBehaviour
     [Tooltip("show effect after collision")]
     public ParticleSystem explosionEffect;
     public float max_distance = 100f;
+    public bool destoryAfterCollision = true;
     protected float current_distance = 0f;
     protected Moveable move_motor;
-    protected bool isMoving = false;
-    public bool destoryAfterCollision = true;
-    public bool isTrigger;
 
 
     /// <summary>
     /// launch forward the direction
     /// </summary>
     /// <param name="direction"></param>
-    public void Launch(Vector2 direction,int layer, float speed = 0,Collider2D src=null)
+    public void Launch(IActorPart src, Vector2 direction, int layer, float speed_rate = 1, float damage_rate=1)
     {
+        this.src = src;
         if (move_motor == null)
         {
             move_motor = GetComponent<Moveable>();
@@ -33,45 +32,37 @@ public class Projectile : MonoBehaviour
         gameObject.layer = layer;
         current_distance = 0;
         move_motor.FaceToDirectionImmediately(direction);
-        move_motor.speed += speed;
-        isMoving = true;
+        move_motor.speed *= speed_rate;
+        beforeDamage.AddListener((damager, damageable) => damager.damage = (int)(damage_rate * damage_rate));
         gameObject.SetActive(true);
     }
 
     private void Update()
     {
-        if (isMoving)
+        current_distance += move_motor.MoveForward();
+        if (current_distance > max_distance)
         {
-            current_distance += move_motor.MoveForward();
-            if (current_distance > max_distance)
-            {
-                Destroy(gameObject);
-                Destroy(this);
-            }
+            DestroySelf();
         }
+
     }
-    protected void OnCollisionEnter2D(Collision2D other)
+    public virtual void Hit(GameObject target)
     {
         Instantiate(explosionEffect, transform.position, Quaternion.identity).Play();
-        onHit?.Invoke(other.gameObject);
+        DoDamage(target);
+        onHit?.Invoke(target);
         if (destoryAfterCollision)
         {
             DestroySelf();
         }
     }
+    protected void OnCollisionEnter2D(Collision2D other)
+    {
+        Hit(other.gameObject);
+    }
     protected void OnTriggerEnter2D(Collider2D other)
     {
-        print("trigger to"+ LayerMask.LayerToName(other.gameObject.layer));
-        Instantiate(explosionEffect, transform.position, Quaternion.identity).Play();
-        //check if this is a trigger
-        if (isTrigger)
-        {
-            onHit?.Invoke(other.gameObject);
-            if (destoryAfterCollision)
-            {
-                DestroySelf();
-            }
-        }
+        Hit(other.gameObject);
     }
 
     protected virtual void DestroySelf()

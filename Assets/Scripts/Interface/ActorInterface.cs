@@ -9,9 +9,9 @@ public interface IActorPart
     IController GetController();
     IDamageable GetDamageable();
     int GetLayer();
-    Vector2 GetPosition();
+    Transform GetTransform();
 }
-public interface IDamageable
+public interface IDamageable:IActorPart
 {
     int GetCurrentHP();
     int GetMaxHP();
@@ -29,10 +29,10 @@ public interface IEquipmentGear : IActorPart
     void Equip(Equipment equipment);
     void TakeOff(Equipment equipment);
     String.EquipSlotName GetEquipSlotName(Equipment equipment);
-    void AddOnEquipListener(UnityAction<Equipment, IEquipmentGear> listener);
-    void RemoveOnEquipListener(UnityAction<Equipment, IEquipmentGear> listener);
-    void AddOnTakeOffListener(UnityAction<Equipment, IEquipmentGear> listener);
-    void RemoveOnTakeOffListener(UnityAction<Equipment, IEquipmentGear> listener);
+    void AddOnEquipListener(UnityAction<Equipment> listener);
+    void RemoveOnEquipListener(UnityAction<Equipment> listener);
+    void AddOnTakeOffListener(UnityAction<Equipment> listener);
+    void RemoveOnTakeOffListener(UnityAction<Equipment> listener);
     Weapon GetWeapon();
 }
 public interface IBackpack : IActorPart

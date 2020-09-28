@@ -4,7 +4,7 @@ public class UIText : MonoBehaviour
 {
     Text mText;
     Animator anim;
-    protected string animName = "default";
+    public static string animName = "default";
     private void Awake()
     {
         mText = GetComponent<Text>();

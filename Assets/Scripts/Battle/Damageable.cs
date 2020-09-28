@@ -1,12 +1,10 @@
 using UnityEngine;
 using System;
 using UnityEngine.Events;
-
-public class Damageable : MonoBehaviour, IDamageable
+public class Damageable : ActorPart, IDamageable, Consumable
 {
-
-
-
+    [Serializable]
+    public class OnDamaged : UnityEvent<IDamageable, Damager> { };
     [SerializeField]
     protected int m_max_health;//max health points
     protected int m_current_health;//current health, won't be bigger than max
@@ -99,6 +97,15 @@ public class Damageable : MonoBehaviour, IDamageable
         }
         return false;
     }
+    //*************************consumable
+    public int GetConsumableMax()
+    {
+        return m_max_health;
+    }
+    public int GetConsumableNow()
+    {
+        return m_current_health;
+    }
     //**************************listener******************************
     public void AddBeforeDamageListener(UnityAction<IDamageable, Damager> listener)
     {
@@ -124,5 +131,4 @@ public class Damageable : MonoBehaviour, IDamageable
     {
         return m_max_health;
     }
-
 }

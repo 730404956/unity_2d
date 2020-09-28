@@ -17,14 +17,14 @@ public class ItemInfoPanel : UIBase
     }
     public void Init(IActor item_owner, Item item)
     {
-        item_name.text = item.item_name;
-        item_desc.text = item.description;
-        item_attr.text = item.attr;
-        item_img.sprite = item.image.sprite;
-        item_img.color = item.image.color;
+        item_name.text = item.GetName();
+        item_desc.text = item.GetDescription();
+        item_attr.text = item.GetAttribute();
+        item_img.sprite = item.GetImage().sprite;
+        item_img.color = item.GetImage().color;
         int i = 0;
         IBackpack backpack = item_owner.GetBackpack();
-        foreach (ItemOperation op in item.operations)
+        foreach (ItemOperation op in item.GetOperations())
         {
             UIButton btn;
             if (i < buttons.Count)

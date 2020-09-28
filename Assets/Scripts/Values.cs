@@ -15,17 +15,17 @@ public class LayerManager
         MonoBehaviour.print("check layer " + name + " ");
         if (name.Equals("Player"))
         {
-            MonoBehaviour.print("oppenent layer: Enemy");
+            MonoBehaviour.print("opponent layer: Enemy");
             return LayerMask.GetMask("Enemy");
         }
         else if (name.Equals("Enemy"))
         {
-            MonoBehaviour.print("oppenent layer: Player");
+            MonoBehaviour.print("opponent layer: Player");
             return LayerMask.GetMask("Player");
         }
         else
         {
-            MonoBehaviour.print("oppenent layer: Default");
+            MonoBehaviour.print("opponent layer: Default");
             return 0;
         }
     }

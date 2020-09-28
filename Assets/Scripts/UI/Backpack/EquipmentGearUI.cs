@@ -10,15 +10,16 @@ public class EquipmentGearUI : MonoBehaviour
 
     public void SetUp(IEquipmentGear gear)
     {
+        m_gear?.RemoveOnEquipListener(Equip);
         m_gear = gear;
         gear.AddOnEquipListener(Equip);
     }
-    public void Equip(Equipment equipment, IEquipmentGear gear)
+    public void Equip(Equipment equipment)
     {
-        String.EquipSlotName slotName = gear.GetEquipSlotName(equipment);
+        String.EquipSlotName slotName = equipment.gear.GetEquipSlotName(equipment);
         foreach (var slot in slots) {
             if (slot.slot_name == slotName) {
-                equipment.item.SetPos(slot.transform);
+                equipment.item.SetUIPos(slot.transform);
             }
         }
     }

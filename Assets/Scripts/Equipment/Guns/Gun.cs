@@ -13,25 +13,26 @@
  */
 using UnityEngine;
 using System.Collections;
-public class Gun : MonoBehaviour
+public class Gun : Weapon, Consumable
 {
     public bool infinity_bullets = true;
+    public bool auto_shoot = false;
+    public float shooting_interval = 1f;
+    public float bullet_speed_rate = 1f;
+    public float bullet_damage_rate = 1f;
     [Range(0, Values.MAX_ACCURACY)]
     public float accuracy = 100;
     public int max_bullets = 1;
     protected Projectile bullet_prefab;
     public float reload_time = 1f;
-    public Transform fire_pos;
-    public bool auto_shoot = false;
-    public float shooting_interval = 1f;
+    [SerializeField]
+    protected Transform fire_pos;
     protected bool shooting = false;
     protected float shooting_cooldown_timmer;
     protected bool shooting_cooldown = false;
     protected int m_current_bullets;
     protected float m_reload_timer;
     protected bool reloading = false;
-    [SerializeField]
-    protected float bullet_speed_up = 0f;
     protected Moveable move_motor;
     // protected Bar energy_bar;
     protected virtual void Start()
@@ -62,60 +63,52 @@ public class Gun : MonoBehaviour
         return Random.Range(-bia, bia);
     }
 
-
-    protected virtual void UpdateEnergyBar()
-    {
-        // if (energy_bar != null)
-        // {
-        //     energy_bar?.SetBarPercentage(m_current_bullets / (float)max_bullets);
-        // }
-    }
     /// <summary>
     /// call once take out from weapon library
     /// </summary>
     public virtual void OnShow()
     {
         gameObject.SetActive(true);
-        UpdateEnergyBar();
     }
     /// <summary>
     /// call when put back to weapon
     /// </summary>
-    public virtual void OnHide(Equipment equipment,IEquipmentGear gear)
+    public virtual void OnHide()
     {
-        FinishUsing(equipment,gear);
+        FinishUsing();
         gameObject.SetActive(false);
     }
     protected virtual void ReloadComplete()
     {
         m_current_bullets = max_bullets;
-        UpdateEnergyBar();
     }
     public virtual void Reload()
     {
         Invoke("ReloadComplete", reload_time);
     }
 
-    public void Use(Equipment equipment, IEquipmentGear gear)
+    public override void Use()
     {
+        base.Use();
         if (auto_shoot)
         {
             shooting = true;
-            StartCoroutine(AutoShoot(equipment,gear));
+            StartCoroutine(AutoShoot());
         }
         else if (IsShootable())
         {
-            Fire(equipment,gear);
+            Fire();
         }
     }
-    public void FinishUsing(Equipment equipment, IEquipmentGear gear)
+    public override void FinishUsing()
     {
+        base.FinishUsing();
         if (auto_shoot)
         {
             shooting = false;
         }
     }
-    protected virtual void Fire(Equipment equipment, IEquipmentGear gear)
+    protected virtual void Fire()
     {
         //instantiate bullet object instance
         Projectile bullet = Instantiate(bullet_prefab, fire_pos.position, Quaternion.identity);
@@ -124,7 +117,7 @@ public class Gun : MonoBehaviour
         //launch bullet
         Vector2 bia = new Vector2(-move_motor.face_direction.y, move_motor.face_direction.x);
         Vector2 direction = move_motor.face_direction + bia * getBias();
-        bullet.Launch(direction, gear.GetLayer(), bullet_speed_up);
+        bullet.Launch(gear, direction, gear.GetLayer(), bullet_speed_rate);
         //set gun's cool down timer
         shooting_cooldown_timmer = shooting_interval;
         //make gun cooldown
@@ -133,10 +126,9 @@ public class Gun : MonoBehaviour
         {
             //cost bullet
             m_current_bullets -= 1;
-            UpdateEnergyBar();
+            FinishUsing();
             if (m_current_bullets <= 0)
             {
-                FinishUsing(equipment, gear);
                 Reload();
             }
         }
@@ -145,14 +137,23 @@ public class Gun : MonoBehaviour
     {
         return !reloading && !shooting_cooldown && (infinity_bullets || m_current_bullets > 0);
     }
-    protected IEnumerator AutoShoot(Equipment equipment,IEquipmentGear gear)
+    protected IEnumerator AutoShoot()
     {
         while (shooting && IsShootable())
         {
-            Fire(equipment, gear);
+            Fire();
             yield return new WaitForSeconds(shooting_interval);
         }
 
+    }
+    //**************************************************impl
+    public int GetConsumableMax()
+    {
+        return max_bullets;
+    }
+    public int GetConsumableNow()
+    {
+        return m_current_bullets;
     }
     //***************************************************rewrite methods*****************************************************************
     public void AimDirection(float x, float y)

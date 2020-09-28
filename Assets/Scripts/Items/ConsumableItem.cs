@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class ConsumableItem : Item
+public class ConsumableItem : BaseItem
 {
     public bool consumable;
     public bool multiple = false;
