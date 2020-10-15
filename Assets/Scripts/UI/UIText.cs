@@ -1,30 +1,29 @@
 using UnityEngine;
 using UnityEngine.UI;
-public class UIText : MonoBehaviour
+public class UIText : RecycleObject
 {
     Text mText;
     Animator anim;
     public static string animName = "default";
-    private void Awake()
+
+    protected override void OnObjectCreate(IRecycleObjectFactory factory)
     {
         mText = GetComponent<Text>();
         anim = GetComponent<Animator>();
     }
-    public void ShowText(string text)
+    public void ShowText(string text,Transform t)
     {
-        if (mText == null)
-        {
-            mText = GetComponent<Text>();
-            anim = GetComponent<Animator>();
-        }
+        transform.parent = t;
+        transform.localPosition = Vector2.zero;
         mText.text = text;
-        gameObject.SetActive(true);
+        ObjectInit();
+    }
+    protected override void OnObjectInit()
+    {
         anim.Play(animName, 0, 0);
     }
-    public void OnPlayFinish()
+    protected override void OnObjectDestroy()
     {
-        gameObject.SetActive(false);
-
+        
     }
-
 }

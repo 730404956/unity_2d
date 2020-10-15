@@ -8,8 +8,6 @@ public class Projectile : Damager
     public class OnHitEvent : UnityEvent<GameObject> { };
     [SerializeField]
     public OnHitEvent onHit;
-    [Tooltip("the force when hit something")]
-    public float collision_force = 100f;
     [Tooltip("show effect after collision")]
     public ParticleSystem explosionEffect;
     public float max_distance = 100f;
@@ -22,19 +20,25 @@ public class Projectile : Damager
     /// launch forward the direction
     /// </summary>
     /// <param name="direction"></param>
-    public void Launch(IActorPart src, Vector2 direction, int layer, float speed_rate = 1, float damage_rate=1)
+    public void Launch(IActorPart src, Vector2 direction, int layer, float speed_rate = 1, float damage_rate = 1)
     {
         this.src = src;
-        if (move_motor == null)
-        {
-            move_motor = GetComponent<Moveable>();
-        }
         gameObject.layer = layer;
-        current_distance = 0;
         move_motor.FaceToDirectionImmediately(direction);
         move_motor.speed *= speed_rate;
-        beforeDamage.AddListener((damager, damageable) => damager.damage = (int)(damage_rate * damage_rate));
-        gameObject.SetActive(true);
+        beforeDamage.AddListener((damager, damageable) => damager.damage = (int)(damager.damage * damage_rate));
+        OnObjectInit();
+    }
+    protected override void OnObjectInit()
+    {
+        current_distance = 0f;
+    }
+    protected override void OnObjectCreate(IRecycleObjectFactory factory) {
+        move_motor = GetComponent<Moveable>();
+    }
+    protected override void OnObjectDestroy()
+    {
+        beforeDamage.RemoveAllListeners();
     }
 
     private void Update()
@@ -42,9 +46,8 @@ public class Projectile : Damager
         current_distance += move_motor.MoveForward();
         if (current_distance > max_distance)
         {
-            DestroySelf();
+            ObjectDestroy();
         }
-
     }
     public virtual void Hit(GameObject target)
     {
@@ -53,7 +56,7 @@ public class Projectile : Damager
         onHit?.Invoke(target);
         if (destoryAfterCollision)
         {
-            DestroySelf();
+            ObjectDestroy();
         }
     }
     protected void OnCollisionEnter2D(Collision2D other)
@@ -63,11 +66,5 @@ public class Projectile : Damager
     protected void OnTriggerEnter2D(Collider2D other)
     {
         Hit(other.gameObject);
-    }
-
-    protected virtual void DestroySelf()
-    {
-        Destroy(gameObject);
-        Destroy(this);
     }
 }

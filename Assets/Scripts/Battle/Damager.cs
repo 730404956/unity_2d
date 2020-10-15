@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.Events;
 public class DamageEvent : UnityEvent<Damager, Damageable> { }
-public class Damager : MonoBehaviour
+public class Damager : RecycleObject
 {
 
     public int damage { get { return m_damage; } set { m_damage = value; } }
@@ -9,12 +9,6 @@ public class Damager : MonoBehaviour
     protected int m_damage;
     protected IActorPart src;
     protected DamageEvent beforeDamage, afterDamage;
-
-
-    protected virtual void Start()
-    {
-        print("in damager start");
-    }
 
     /// <summary>
     /// do damage to a damager, if success, return true;
@@ -31,7 +25,7 @@ public class Damager : MonoBehaviour
         }
         return hit;
     }
-
+    
     public bool DoDamage(GameObject target)
     {
         Damageable tar = target.GetComponent<Damageable>();
@@ -40,8 +34,12 @@ public class Damager : MonoBehaviour
         return false;
     }
     //***********************************setter&getter
-        public IActorPart GetSrc()
+    public IActorPart GetSrc()
     {
         return src;
     }
+    //***********************************empty impl
+    protected override void OnObjectInit() { }
+    protected override void OnObjectDestroy() { }
+    protected override void OnObjectCreate(IRecycleObjectFactory factory) { }
 }

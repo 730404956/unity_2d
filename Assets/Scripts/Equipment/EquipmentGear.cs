@@ -64,7 +64,7 @@ public class EquipmentGear : ActorPart, IEquipmentGear
     {
         foreach (EquipmentSlot slot in slots)
         {
-            if (slot.type == EquipmentType.Weapon)
+            if (slot.type == String.EquipmentType.Weapon)
             {
                 return (Weapon)slot.m_equipment;
             }
@@ -108,7 +108,7 @@ public class EquipmentSlot
     public String.EquipSlotName slot_name;
     public bool isEmpty { get { return m_equipment == null; } }
     public Transform model_slot;
-    public EquipmentType type;
+    public String.EquipmentType type;
     [HideInInspector]
     public Equipment m_equipment;
     public void SetEquipment(Equipment equipment)

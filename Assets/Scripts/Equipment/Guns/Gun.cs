@@ -103,6 +103,7 @@ public class Gun : Weapon, Consumable
     public override void FinishUsing()
     {
         base.FinishUsing();
+        
         if (auto_shoot)
         {
             shooting = false;
@@ -111,9 +112,7 @@ public class Gun : Weapon, Consumable
     protected virtual void Fire()
     {
         //instantiate bullet object instance
-        Projectile bullet = Instantiate(bullet_prefab, fire_pos.position, Quaternion.identity);
-        //set transform parent
-        bullet.transform.SetParent(GameObject.Find("projectiles").transform);
+        Projectile bullet = GameManager.instance.objectPool.GetRecycleObject<Projectile>(bullet_prefab);
         //launch bullet
         Vector2 bia = new Vector2(-move_motor.face_direction.y, move_motor.face_direction.x);
         Vector2 direction = move_motor.face_direction + bia * getBias();

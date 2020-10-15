@@ -32,6 +32,6 @@ public class EquipmentGearUI : MonoBehaviour
 public class EquipmentSlotUI
 {
     public String.EquipSlotName slot_name;
-    public EquipmentType slot_type;
+    public String.EquipmentType slot_type;
     public RectTransform transform;
 }

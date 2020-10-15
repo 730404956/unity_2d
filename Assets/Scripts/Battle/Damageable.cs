@@ -48,8 +48,7 @@ public class Damageable : ActorPart, IDamageable, Consumable
     /// <summary>
     /// hit or damaged by a damager
     /// </summary>
-    /// <param name="damage"></param>
-    /// <param name="damager"></param>
+    /// <param name="src"></param>
     public virtual bool ReceiveDamage(Damager src)
     {
         if (!invincible)

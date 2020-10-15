@@ -3,6 +3,7 @@ using UnityEngine.Events;
 using UnityEngine;
 public interface IActorPart
 {
+    void Init(IEquipmentGear gear,IBackpack backpack,IActor Actor,IController controller,IDamageable damageable);
     IEquipmentGear GetGear();
     IBackpack GetBackpack();
     IActor GetActor();

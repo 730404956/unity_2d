@@ -42,4 +42,8 @@ public class String
         Ring,
         Shoes
     };
+    public enum EquipmentType
+    {
+        Weapon, Body
+    }
 }

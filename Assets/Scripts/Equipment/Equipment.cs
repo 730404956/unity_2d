@@ -21,7 +21,7 @@ public abstract class Equipment : MonoBehaviour
 {
     [SerializeField]
     protected EquipmentEvent onEquip, onTakeOff;
-    public EquipmentType type;
+    public String.EquipmentType type;
     public IEquipmentGear gear;
     public EquipmentItem item;
 
@@ -56,8 +56,4 @@ public abstract class Equipment : MonoBehaviour
         print("bind model success.");
         return false;
     }
-}
-public enum EquipmentType
-{
-    Weapon, Body
 }
