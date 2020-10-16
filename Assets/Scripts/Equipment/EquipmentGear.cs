@@ -4,7 +4,7 @@
  * File Created: Monday, 16th March 2020 6:20:23 pm
  * Author: Acetering (730404956@qq.com)
  * -----
- * Last Modified: Sunday, 6th September 2020 2:49:50 pm
+ * Last Modified: Friday, 16th October 2020 12:53:05 pm
  * Modified By: Acetering (730404956@qq.com>)
  * -----
  * MODIFIED HISTORY:
@@ -64,8 +64,9 @@ public class EquipmentGear : ActorPart, IEquipmentGear
     {
         foreach (EquipmentSlot slot in slots)
         {
-            if (slot.type == String.EquipmentType.Weapon)
+            if (slot.type == String.EquipmentType.Weapon && slot.m_equipment != null)
             {
+                print("get weapon at:" + slot.slot_name +"  ->" +slot.m_equipment);
                 return (Weapon)slot.m_equipment;
             }
         }

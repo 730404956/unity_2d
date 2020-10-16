@@ -20,6 +20,7 @@ public interface IRecycleObject
     /// <typeparam name="T"></typeparam>
     /// <returns>object has the same attr as prototype</returns>
     T Clone<T>(T prototype) where T : IRecycleObject;
+    IRecycleObject Copy(IRecycleObject prototype);
 
 }
 public abstract class RecycleObject : MonoBehaviour, IRecycleObject
@@ -49,7 +50,7 @@ public abstract class RecycleObject : MonoBehaviour, IRecycleObject
     public void ObjectInit()
     {
         gameObject.SetActive(true);
-        aviable = true;
+        aviable = false;
         OnObjectInit();
     }
     public bool IsAviable()
@@ -59,7 +60,7 @@ public abstract class RecycleObject : MonoBehaviour, IRecycleObject
     public void ObjectDestroy()
     {
         OnObjectDestroy();
-        aviable = false;
+        aviable = true;
         gameObject.SetActive(false);
         m_factory.Recycle(this);
     }
@@ -75,6 +76,9 @@ public abstract class RecycleObject : MonoBehaviour, IRecycleObject
             return default(T);
         }
     }
+    public virtual IRecycleObject Copy(IRecycleObject prototype) {
+        return this;
+    }
 }
 public interface IRecycleObjectFactory
 {
@@ -86,6 +90,9 @@ public interface IRecycleObjectFactory
 public class RecycleObjectFactory : IRecycleObjectFactory
 {
     protected Dictionary<System.Type, List<IRecycleObject>> prototypes;
+    public RecycleObjectFactory() {
+        prototypes = new Dictionary<System.Type, List<IRecycleObject>>();
+    }
     public virtual void AddPrototype(IRecycleObject obj)
     {
         if (!prototypes.ContainsKey(obj.GetType()))
@@ -103,13 +110,16 @@ public class RecycleObjectFactory : IRecycleObjectFactory
     }
     public T GetRecycleObject<T>(T template) where T : IRecycleObject
     {
+        T temp;
         if (prototypes.ContainsKey(template.GetType()))
         {
             foreach (T t in prototypes[template.GetType()])
             {
                 if (t.IsAviable())
                 {
-                    return t.Clone(template);
+                    temp=(T)t.Copy(template);
+                    temp.ObjectInit();
+                    return temp;
                 }
             }
         }
@@ -118,7 +128,9 @@ public class RecycleObjectFactory : IRecycleObjectFactory
             List<IRecycleObject> group = new List<IRecycleObject>();
             prototypes.Add(template.GetType(), group);
         }
-        return Create<T>(template);
+        temp= Create<T>(template);
+        temp.ObjectInit();
+        return temp;
     }
     public virtual void Recycle(IRecycleObject recycleObject)
     {

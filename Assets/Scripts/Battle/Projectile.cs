@@ -20,10 +20,11 @@ public class Projectile : Damager
     /// launch forward the direction
     /// </summary>
     /// <param name="direction"></param>
-    public void Launch(IActorPart src, Vector2 direction, int layer, float speed_rate = 1, float damage_rate = 1)
+    public void Launch(IActorPart src, Vector2 fire_pos, Vector2 direction, int layer, float speed_rate = 1, float damage_rate = 1)
     {
         this.src = src;
         gameObject.layer = layer;
+        move_motor.transform.position = fire_pos;
         move_motor.FaceToDirectionImmediately(direction);
         move_motor.speed *= speed_rate;
         beforeDamage.AddListener((damager, damageable) => damager.damage = (int)(damager.damage * damage_rate));
@@ -33,12 +34,20 @@ public class Projectile : Damager
     {
         current_distance = 0f;
     }
-    protected override void OnObjectCreate(IRecycleObjectFactory factory) {
+    protected override void OnObjectCreate(IRecycleObjectFactory factory)
+    {
+        base.OnObjectCreate(factory);
         move_motor = GetComponent<Moveable>();
     }
-    protected override void OnObjectDestroy()
+    public override IRecycleObject Copy(IRecycleObject prototype)
     {
-        beforeDamage.RemoveAllListeners();
+        if (prototype is Projectile) {
+            Projectile p = prototype as Projectile;
+            this.max_distance = p.max_distance;
+            this.destoryAfterCollision = p.destoryAfterCollision;
+            this.move_motor.Copy(p.GetComponent<Moveable>());
+        }
+        return base.Copy(prototype);
     }
 
     private void Update()

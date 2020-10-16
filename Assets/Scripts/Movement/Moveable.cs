@@ -4,7 +4,7 @@
  * File Created: Thursday, 12th March 2020 6:28:59 pm
  * Author: Acetering (730404956@qq.com)
  * -----
- * Last Modified: Sunday, 30th August 2020 1:10:03 pm
+ * Last Modified: Friday, 16th October 2020 2:20:20 pm
  * Modified By: Acetering (730404956@qq.com>)
  * -----
  * MODIFIED HISTORY:
@@ -60,7 +60,14 @@ public class Moveable : MonoBehaviour
         }
     }
 
-
+    public virtual Moveable Copy(Moveable m) {
+        this.speed = m.speed;
+        this.force_moving_rate = m.force_moving_rate;
+        this.disable_rotation = m.disable_rotation;
+        this.m_face_direction = m.face_direction;
+        this.m_rotate_speed = m.m_rotate_speed;
+        return this;
+    }
     protected bool IsMoveable()
     {
         return !force_moving;

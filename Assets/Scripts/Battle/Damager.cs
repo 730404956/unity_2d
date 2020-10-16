@@ -25,13 +25,31 @@ public class Damager : RecycleObject
         }
         return hit;
     }
-    
+
     public bool DoDamage(GameObject target)
     {
         Damageable tar = target.GetComponent<Damageable>();
         if (tar != null)
             return DoDamage(tar);
         return false;
+    }
+    protected override void OnObjectCreate(IRecycleObjectFactory factory)
+    {
+        beforeDamage = new DamageEvent();
+        afterDamage = new DamageEvent();
+    }
+    protected override void OnObjectDestroy()
+    {
+        beforeDamage.RemoveAllListeners();
+    }
+    public override IRecycleObject Copy(IRecycleObject prototype)
+    {
+        if (prototype is Damager)
+        {
+            Damager damager = prototype as Damager;
+            this.m_damage = damager.m_damage;
+        }
+        return base.Copy(prototype);
     }
     //***********************************setter&getter
     public IActorPart GetSrc()
@@ -40,6 +58,4 @@ public class Damager : RecycleObject
     }
     //***********************************empty impl
     protected override void OnObjectInit() { }
-    protected override void OnObjectDestroy() { }
-    protected override void OnObjectCreate(IRecycleObjectFactory factory) { }
 }

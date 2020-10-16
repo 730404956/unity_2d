@@ -1,6 +1,8 @@
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Events;
 
+public class ConsumEvent : UnityEvent<Consumable> { }
 public interface Consumable
 {
     int GetConsumableMax();

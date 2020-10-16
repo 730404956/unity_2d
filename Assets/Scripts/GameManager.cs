@@ -5,8 +5,8 @@ public class GameManager : MonoBehaviour {
     public Actor main_actor;
     public BackpackUI backPackUI;
     public UITextFactory uITextFactory;
-    public IRecycleObjectFactory objectPool;
-    private void Awake() {
+    public IRecycleObjectFactory objectPool=new RecycleObjectFactory();
+    private void Start() {
         instance = this;
         backPackUI.SetUp(main_actor);
     }

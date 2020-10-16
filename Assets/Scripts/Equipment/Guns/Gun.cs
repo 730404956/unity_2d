@@ -4,7 +4,7 @@
  * File Created: Friday, 13th March 2020 2:05:48 pm
  * Author: Acetering (730404956@qq.com)
  * -----
- * Last Modified: Sunday, 6th September 2020 1:55:08 pm
+ * Last Modified: Friday, 16th October 2020 1:42:52 pm
  * Modified By: Acetering (730404956@qq.com>)
  * -----
  * MODIFIED HISTORY:
@@ -89,6 +89,7 @@ public class Gun : Weapon, Consumable
 
     public override void Use()
     {
+        print("fire");
         base.Use();
         if (auto_shoot)
         {
@@ -103,7 +104,7 @@ public class Gun : Weapon, Consumable
     public override void FinishUsing()
     {
         base.FinishUsing();
-        
+
         if (auto_shoot)
         {
             shooting = false;
@@ -116,7 +117,7 @@ public class Gun : Weapon, Consumable
         //launch bullet
         Vector2 bia = new Vector2(-move_motor.face_direction.y, move_motor.face_direction.x);
         Vector2 direction = move_motor.face_direction + bia * getBias();
-        bullet.Launch(gear, direction, gear.GetLayer(), bullet_speed_rate);
+        bullet.Launch(gear, fire_pos.position, direction, gear.GetLayer(), bullet_speed_rate);
         //set gun's cool down timer
         shooting_cooldown_timmer = shooting_interval;
         //make gun cooldown

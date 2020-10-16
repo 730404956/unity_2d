@@ -4,7 +4,7 @@
  * File Created: Friday, 13th March 2020 1:24:02 pm
  * Author: Acetering (730404956@qq.com)
  * -----
- * Last Modified: Sunday, 6th September 2020 2:14:01 pm
+ * Last Modified: Friday, 16th October 2020 12:51:33 pm
  * Modified By: Acetering (730404956@qq.com>)
  * -----
  * MODIFIED HISTORY:
@@ -50,10 +50,10 @@ public abstract class Equipment : MonoBehaviour
         {
             transform.SetParent(tf);
             transform.localPosition = Vector2.zero;
-            print("bind model failed.");
+            print("bind model success.");
             return true;
         }
-        print("bind model success.");
+        print("bind model failed.");
         return false;
     }
 }

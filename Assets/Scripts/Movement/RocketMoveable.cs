@@ -4,7 +4,7 @@
  * File Created: Friday, 13th March 2020 6:22:21 pm
  * Author: Acetering (730404956@qq.com)
  * -----
- * Last Modified: Friday, 15th May 2020 2:17:59 pm
+ * Last Modified: Friday, 16th October 2020 2:21:28 pm
  * Modified By: Acetering (730404956@qq.com>)
  * -----
  * MODIFIED HISTORY:
@@ -62,33 +62,15 @@ public class RocketMoveable : Moveable
             print(gameObject + " get target " + target.gameObject + " !!!");
         }
     }
-
-
-    // public void setTarget(Transform target){
-    //     this.target = target;
-    // }
-    // public void MoveFollow(Transform target)
-    // {
-    //     if (!isMoving)
-    //     {
-    //         isMoving = true;
-    //         StartCoroutine(MoveFollowTarget(target));
-    //     }
-    // }
-    // protected IEnumerator MoveFollowTarget(Transform target)
-    // {
-    //     // continue move till close enough to the target position
-    //     Vector2 position = target.position;
-    //     while (isMoving && Vector2.Distance(rigidbody2D.position, position) > Values.float_zero)
-    //     {
-    //         //face to the position
-    //         FaceTowards(position - rigidbody2D.position);
-    //         //move forward to close the position
-    //         MoveForward();
-    //         yield return null;
-    //         position = target.position;
-    //     }
-    //     //finish moving
-    //     isMoving = false;
-    // }
+    public override Moveable Copy(Moveable m)
+    {
+        if (m is RocketMoveable)
+        {
+            RocketMoveable rocketMoveable = m as RocketMoveable;
+            this.enable_speed_transform = rocketMoveable.enable_speed_transform;
+            this.angle_liner_transform_rate = rocketMoveable.angle_liner_transform_rate;
+            this.angle_speed_decrease_rate = rocketMoveable.angle_speed_decrease_rate;
+        }
+        return base.Copy(m);
+    }
 }
