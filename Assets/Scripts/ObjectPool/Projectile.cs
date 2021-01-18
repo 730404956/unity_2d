@@ -1,6 +1,7 @@
 using UnityEngine;
 using System;
 using UnityEngine.Events;
+namespace Acetering{
 [RequireComponent(typeof(Moveable))]
 public class Projectile : Damager
 {
@@ -9,7 +10,7 @@ public class Projectile : Damager
     [SerializeField]
     public OnHitEvent onHit;
     [Tooltip("show effect after collision")]
-    public ParticleSystem explosionEffect;
+    public Explosion explosionEffect;
     public float max_distance = 100f;
     public bool destoryAfterCollision = true;
     protected float current_distance = 0f;
@@ -20,34 +21,37 @@ public class Projectile : Damager
     /// launch forward the direction
     /// </summary>
     /// <param name="direction"></param>
-    public void Launch(IActorPart src, Vector2 fire_pos, Vector2 direction, int layer, float speed_rate = 1, float damage_rate = 1)
+    public void Launch(IActorPart src, Vector2 start_pos, Vector2 direction, int layer, float speed_rate = 1, float damage_rate = 1)
     {
         this.src = src;
         gameObject.layer = layer;
-        move_motor.transform.position = fire_pos;
+        this.transform.position = start_pos;
+        if (beforeDamage == null)
+        {
+            beforeDamage = new DamageEvent();
+        }
+        beforeDamage.AddListener((damager, damageable) => damager.damage = (int)(damager.damage * damage_rate));
+        ObjectInit();
         move_motor.FaceToDirectionImmediately(direction);
         move_motor.speed *= speed_rate;
-        beforeDamage.AddListener((damager, damageable) => damager.damage = (int)(damager.damage * damage_rate));
-        OnObjectInit();
     }
-    protected override void OnObjectInit()
+    public override void OnObjectInit()
     {
+        base.OnObjectInit();
+        move_motor = GetComponent<Moveable>();
         current_distance = 0f;
     }
-    protected override void OnObjectCreate(IRecycleObjectFactory factory)
+    public override void OnObjectCreate(IRecycleObjectFactory factory)
     {
         base.OnObjectCreate(factory);
-        move_motor = GetComponent<Moveable>();
     }
-    public override IRecycleObject Copy(IRecycleObject prototype)
+    public override void OnObjectDestroy()
     {
-        if (prototype is Projectile) {
-            Projectile p = prototype as Projectile;
-            this.max_distance = p.max_distance;
-            this.destoryAfterCollision = p.destoryAfterCollision;
-            this.move_motor.Copy(p.GetComponent<Moveable>());
-        }
-        return base.Copy(prototype);
+        base.OnObjectDestroy();
+        beforeDamage.RemoveAllListeners();
+        Explosion explosion = GameManager.instance.objectPool.GetRecycleObject<Explosion>(explosionEffect);
+        explosion.transform.position = transform.position;
+        explosion.ObjectInit();
     }
 
     private void Update()
@@ -60,7 +64,6 @@ public class Projectile : Damager
     }
     public virtual void Hit(GameObject target)
     {
-        Instantiate(explosionEffect, transform.position, Quaternion.identity).Play();
         DoDamage(target);
         onHit?.Invoke(target);
         if (destoryAfterCollision)
@@ -76,4 +79,4 @@ public class Projectile : Damager
     {
         Hit(other.gameObject);
     }
-}
+}}

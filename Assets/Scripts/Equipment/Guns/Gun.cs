@@ -4,7 +4,7 @@
  * File Created: Friday, 13th March 2020 2:05:48 pm
  * Author: Acetering (730404956@qq.com)
  * -----
- * Last Modified: Friday, 16th October 2020 1:42:52 pm
+ * Last Modified: Sunday, 17th January 2021 1:57:46 pm
  * Modified By: Acetering (730404956@qq.com>)
  * -----
  * MODIFIED HISTORY:
@@ -13,6 +13,7 @@
  */
 using UnityEngine;
 using System.Collections;
+namespace Acetering{
 public class Gun : Weapon, Consumable
 {
     public bool infinity_bullets = true;
@@ -89,7 +90,6 @@ public class Gun : Weapon, Consumable
 
     public override void Use()
     {
-        print("fire");
         base.Use();
         if (auto_shoot)
         {
@@ -168,4 +168,4 @@ public class Gun : Weapon, Consumable
     {
         AimDirection(position - move_motor.position);
     }
-}
+}}

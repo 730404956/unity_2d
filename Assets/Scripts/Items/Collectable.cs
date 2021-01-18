@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.Events;
 using System;
+namespace Acetering{
 [Serializable]
 public class OnCollectEvent : UnityEvent<Collectable, IBackpack> { }
 [RequireComponent(typeof(Collider2D))]
@@ -31,7 +32,7 @@ public class Collectable : MonoBehaviour
     {
         if (auto_collect)
         {
-            Actor actor = other.gameObject.GetComponent<Actor>();
+            IActorPart actor = other.gameObject.GetComponent<IActorPart>();
             if (actor != null)
             {
                 CollectBy(actor.GetBackpack());
@@ -40,7 +41,7 @@ public class Collectable : MonoBehaviour
         else
         if (InputManager.GetCollectDown())
         {
-            Actor actor = other.gameObject.GetComponent<Actor>();
+            IActorPart actor = other.gameObject.GetComponent<IActorPart>();
             if (actor != null)
             {
                 CollectBy(actor.GetBackpack());
@@ -60,4 +61,4 @@ public class Collectable : MonoBehaviour
         transform.position = pos;
         Init();
     }
-}
+}}

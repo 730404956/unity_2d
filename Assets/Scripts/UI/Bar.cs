@@ -1,44 +1,33 @@
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.Events;
-
-public class ConsumEvent : UnityEvent<Consumable> { }
-public interface Consumable
+namespace Acetering
 {
-    int GetConsumableMax();
-    int GetConsumableNow();
-}
-public class Bar : MonoBehaviour
-{
-    public Image mask;
-    float original_size;
+    public interface Consumable
+    {
+        int GetConsumableMax();
+        int GetConsumableNow();
+    }
+    public class Bar : MonoBehaviour
+    {
+        protected Image mask;
+        protected float original_size;
 
-    void Start()
-    {
-        original_size = mask.rectTransform.rect.width;
-    }
-    /// <summary>
-    /// update health bar with percentage
-    /// </summary>
-    /// <param name="current_percentage"></param>
-    public void SetBarPercentage(float current_percentage)
-    {
-        mask.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, original_size * current_percentage);
-    }
-    public void UpdateBar(Consumable consumable)
-    {
-        SetBarPercentage(consumable.GetConsumableNow() / (float)consumable.GetConsumableMax());
-    }
-    public void UpdateBar(MonoBehaviour consumable)
-    {
-        if (consumable is Consumable)
+        public void Init()
         {
-            UpdateBar(consumable as Consumable);
+            mask = transform.GetChild(0).Find("mask").GetComponent<Image>();
+            original_size = mask.rectTransform.rect.width;
+        }
+        /// <summary>
+        /// update health bar with percentage
+        /// </summary>
+        /// <param name="current_percentage"></param>
+        public void SetBarPercentage(float current_percentage)
+        {
+            mask.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, original_size * current_percentage);
+        }
+        public void SetBarPercentage(Consumable consumable)
+        {
+            SetBarPercentage(consumable.GetConsumableNow() / (float)consumable.GetConsumableMax());
         }
     }
-    public void UpdateBar(MonoBehaviour consumable, MonoBehaviour other)
-    {
-        UpdateBar(consumable);
-    }
-
 }

@@ -1,10 +1,8 @@
 using UnityEngine;
+namespace Acetering{
 
 public class UIBase : MonoBehaviour
 {
-    private void Awake()
-    {
-    }
     public virtual void Show()
     {
         gameObject.SetActive(true);
@@ -26,4 +24,4 @@ public class UIBase : MonoBehaviour
     }
 
     //***************************************rewrite*************************
-}
+}}

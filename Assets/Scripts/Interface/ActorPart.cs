@@ -1,66 +1,67 @@
 using UnityEngine;
-
-public class ActorPart : MonoBehaviour, IActorPart
+namespace Acetering
 {
-    private bool inited = false;
-    public IActor actor;
-    public IDamageable damageable;
-    protected IBackpack backpack;
-    protected IEquipmentGear gear;
-    protected IController controller;
-    private void Awake()
+    public class ActorPart : MonoBehaviour, IActorPart
     {
-        if (!inited)
+        private bool inited = false;
+        public IDamageable damageable;
+        protected IBackpack backpack;
+        protected IEquipmentGear gear;
+        protected IController controller;
+        private void Awake()
         {
-            damageable = GetComponent<IDamageable>();
-            gear = GetComponent<IEquipmentGear>();
-            backpack = GetComponent<IBackpack>();
-            actor = GetComponent<IActor>();
-            controller = GetComponent<IController>();
-            inited = true;
-            damageable.Init(gear, backpack, actor, controller, damageable);
-            backpack.Init(gear, backpack, actor, controller, damageable);
-            actor.Init(gear, backpack, actor, controller, damageable);
-            gear.Init(gear, backpack, actor, controller, damageable);
+            if (!inited)
+            {
+                damageable = GetComponent<IDamageable>();
+                gear = GetComponent<IEquipmentGear>();
+                backpack = GetComponent<IBackpack>();
+                controller = GetComponent<BaseController>();
+                Init();
+                inited = true;
+                damageable.Init(gear, backpack, controller, damageable);
+                backpack.Init(gear, backpack, controller, damageable);
+                gear.Init(gear, backpack, controller, damageable);
+                controller.Init(gear, backpack, controller, damageable);
+            }
         }
-    }
-    public void Init(IEquipmentGear gear, IBackpack backpack, IActor actor, IController controller, IDamageable damageable)
-    {
-        if (inited)
-            return;
-        this.gear = gear;
-        this.backpack = backpack;
-        this.actor = actor;
-        this.controller = controller;
-        this.damageable = damageable;
-        inited = true;
-    }
-    public IEquipmentGear GetGear()
-    {
-        return gear;
-    }
-    public IActor GetActor()
-    {
-        return actor;
-    }
-    public IDamageable GetDamageable()
-    {
-        return damageable;
-    }
-    public IBackpack GetBackpack()
-    {
-        return backpack;
-    }
-    public int GetLayer()
-    {
-        return gameObject.layer;
-    }
-    public Transform GetTransform()
-    {
-        return transform;
-    }
-    public IController GetController()
-    {
-        return controller;
+        public void Init(IEquipmentGear gear, IBackpack backpack, IController controller, IDamageable damageable)
+        {
+            if (inited)
+                return;
+            this.gear = gear;
+            this.backpack = backpack;
+            this.controller = controller;
+            this.damageable = damageable;
+            Init();
+            inited = true;
+        }
+        protected virtual void Init()
+        {
+            print(this+"nothing to init");
+        }
+        public IEquipmentGear GetGear()
+        {
+            return gear;
+        }
+        public IDamageable GetDamageable()
+        {
+            return damageable;
+        }
+        public IBackpack GetBackpack()
+        {
+            return backpack;
+        }
+        public int GetLayer()
+        {
+            return gameObject.layer;
+        }
+        public Transform GetTransform()
+        {
+            return transform;
+        }
+        public IController GetController()
+        {
+            return controller;
+        }
     }
 }

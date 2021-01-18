@@ -1,61 +1,89 @@
 using UnityEngine;
 using UnityEngine.Events;
-public class DamageEvent : UnityEvent<Damager, Damageable> { }
-public class Damager : RecycleObject
+using System.Collections;
+namespace Acetering
 {
-
-    public int damage { get { return m_damage; } set { m_damage = value; } }
-    [SerializeField]
-    protected int m_damage;
-    protected IActorPart src;
-    protected DamageEvent beforeDamage, afterDamage;
-
-    /// <summary>
-    /// do damage to a damager, if success, return true;
-    /// </summary>
-    /// <param name="target"></param>
-    /// <returns></returns>
-    public virtual bool DoDamage(Damageable target)
+    public interface DamagerController
     {
-        beforeDamage?.Invoke(this, target);
-        bool hit = target.ReceiveDamage(this);
-        if (hit)
+        void Activate();
+        void Inactivate();
+    }
+    public class DamageEvent : UnityEvent<Damager, Damageable> { }
+    public class Damager : RecycleObject
+    {
+
+        public int damage { get { return (int)(m_damage * atk_rate); } set { m_damage = value; } }
+        [SerializeField]
+        protected int m_damage;
+        public float atk_rate { get { return m_atk_rate; } set { m_atk_rate = Mathf.Clamp(value, 0, 10); } }
+        [SerializeField]
+        protected float m_atk_rate;
+        //TODO:set src
+        public IActorPart src { get; set; }
+        protected DamageEvent beforeDamage, afterDamage;
+        protected bool activate = false;
+        protected Hashtable hit_enemys = new Hashtable(5);
+        protected Vector2 force;
+        protected bool use_force = false;
+
+        /// <summary>
+        /// do damage to a damager, if success, return true;
+        /// </summary>
+        /// <param name="target"></param>
+        /// <returns></returns>
+        public virtual bool DoDamage(Damageable target)
         {
-            afterDamage?.Invoke(this, target);
+            beforeDamage?.Invoke(this, target);
+            bool hit = target.ReceiveDamage(this);
+            if (hit)
+            {
+                afterDamage?.Invoke(this, target);
+            }
+            return hit;
         }
-        return hit;
-    }
-
-    public bool DoDamage(GameObject target)
-    {
-        Damageable tar = target.GetComponent<Damageable>();
-        if (tar != null)
-            return DoDamage(tar);
-        return false;
-    }
-    protected override void OnObjectCreate(IRecycleObjectFactory factory)
-    {
-        beforeDamage = new DamageEvent();
-        afterDamage = new DamageEvent();
-    }
-    protected override void OnObjectDestroy()
-    {
-        beforeDamage.RemoveAllListeners();
-    }
-    public override IRecycleObject Copy(IRecycleObject prototype)
-    {
-        if (prototype is Damager)
+        public void Activate()
         {
-            Damager damager = prototype as Damager;
-            this.m_damage = damager.m_damage;
+            activate = true;
+            hit_enemys.Clear();
         }
-        return base.Copy(prototype);
+        public void Inactivate()
+        {
+            activate = false;
+        }
+        public void SetForce(Vector2 force)
+        {
+            use_force = true;
+            this.force = force;
+        }
+        public void ClearForce()
+        {
+            use_force = false;
+        }
+
+        public bool DoDamage(GameObject target)
+        {
+            Damageable tar = target.GetComponent<Damageable>();
+            if (tar != null)
+                return DoDamage(tar);
+            return false;
+        }
+        //***********************************setter&getter
+        public IActorPart GetSrc()
+        {
+            return src;
+        }
+        //***********************************empty impl
+        public override void OnObjectInit()
+        {
+            atk_rate = 1;
+        }
+        public override void OnObjectDestroy()
+        {
+
+        }
+        public override void OnObjectCreate(IRecycleObjectFactory factory)
+        {
+
+        }
     }
-    //***********************************setter&getter
-    public IActorPart GetSrc()
-    {
-        return src;
-    }
-    //***********************************empty impl
-    protected override void OnObjectInit() { }
 }

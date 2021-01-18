@@ -1,4 +1,5 @@
 using UnityEngine;
+namespace Acetering{
 
 public class Amor : Equipment
 {
@@ -18,4 +19,4 @@ public class Amor : Equipment
             });
         });
     }
-}
+}}

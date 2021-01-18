@@ -4,7 +4,7 @@
  * File Created: Friday, 13th March 2020 1:29:30 pm
  * Author: Acetering (730404956@qq.com)
  * -----
- * Last Modified: Sunday, 6th September 2020 2:16:57 pm
+ * Last Modified: Sunday, 17th January 2021 1:57:46 pm
  * Modified By: Acetering (730404956@qq.com>)
  * -----
  * MODIFIED HISTORY:
@@ -12,6 +12,7 @@
  * ---------------	---	---------------------------------------------------------
  */
 using UnityEngine;
+namespace Acetering{
 
 [RequireComponent(typeof(Moveable))]
 public class Weapon : Equipment
@@ -25,6 +26,7 @@ public class Weapon : Equipment
     {
         OnWeaponUseFinish?.Invoke(this);
     }
+    //*****************************override*************************
     /// <summary>
     /// call when remove from weapon library
     /// unbind energy_bar
@@ -35,4 +37,4 @@ public class Weapon : Equipment
         FinishUsing();
         base.OnTakeOff();
     }
-}
+}}

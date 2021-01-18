@@ -1,6 +1,7 @@
 using UnityEngine;
 using System;
 using System.Collections.Generic;
+namespace Acetering{
 
 public class EquipmentGearUI : MonoBehaviour
 {
@@ -34,4 +35,4 @@ public class EquipmentSlotUI
     public String.EquipSlotName slot_name;
     public String.EquipmentType slot_type;
     public RectTransform transform;
-}
+}}

@@ -4,7 +4,7 @@
  * File Created: Monday, 16th March 2020 6:20:23 pm
  * Author: Acetering (730404956@qq.com)
  * -----
- * Last Modified: Friday, 16th October 2020 12:53:05 pm
+ * Last Modified: Monday, 18th January 2021 9:44:22 pm
  * Modified By: Acetering (730404956@qq.com>)
  * -----
  * MODIFIED HISTORY:
@@ -15,114 +15,119 @@ using UnityEngine;
 using UnityEngine.Events;
 using System.Collections.Generic;
 using System;
-/// <summary>
-/// library to store actors weapons in bag, current weapon in hands can be exchanged with those in library through ExchangeCurrentWeapon();
-/// </summary>
-public class EquipmentGear : ActorPart, IEquipmentGear
+namespace Acetering
 {
+    /// <summary>
+    /// library to store actors weapons in bag, current weapon in hands can be exchanged with those in library through ExchangeCurrentWeapon();
+    /// </summary>
+    public class EquipmentGear : ActorPart, IEquipmentGear
+    {
+        public List<EquipmentSlot> slots;
+        public EquipmentEvent onEquip, OnTakeOff;
+        public void Equip(Equipment equipment)
+        {
+            foreach (EquipmentSlot slot in slots)
+            {
+                if (slot.isEmpty && slot.type == equipment.type)
+                {
+                    equipment.OnEquip(this);
+                    controller.OnEquipmentAdd(equipment);
+                    slot.SetEquipment(equipment);
+                    onEquip.Invoke(equipment);
+                    print("equip to empty pos");
+                    return;
+                }
+            }
+            foreach (EquipmentSlot slot in slots)
+            {
+                if (slot.type == equipment.type)
+                {
+                    print("change equipment");
+                    slot.m_equipment.OnTakeOff();
+                    controller.OnEquipmentRemove(slot.m_equipment);
+                    equipment.OnEquip(this);
+                    controller.OnEquipmentAdd(equipment);
+                    slot.SetEquipment(equipment);
+                    onEquip.Invoke(equipment);
+                    return;
+                }
+            }
+        }
+        public void TakeOff(Equipment equipment)
+        {
+            foreach (EquipmentSlot slot in slots)
+            {
+                if (slot.m_equipment == equipment)
+                {
+                    slot.Clear();
+                    OnTakeOff.Invoke(equipment);
+                    equipment.OnTakeOff();
+                }
+            }
+        }
+        public Weapon GetWeapon()
+        {
+            foreach (EquipmentSlot slot in slots)
+            {
+                if (slot.type == String.EquipmentType.Weapon)
+                {
+                    return (Weapon)slot.m_equipment;
+                }
+            }
+            return null;
+        }
+        public String.EquipSlotName GetEquipSlotName(Equipment equipment)
+        {
+            foreach (EquipmentSlot slot in slots)
+            {
+                if (slot.m_equipment == equipment)
+                {
+                    return slot.slot_name;
+                }
+            }
+            return String.EquipSlotName.None;
+        }
+        //******************************impl
+        public void AddOnEquipListener(UnityAction<Equipment> listener)
+        {
+            onEquip.AddListener(listener);
+        }
+        public void RemoveOnEquipListener(UnityAction<Equipment> listener)
+        {
+            onEquip.RemoveListener(listener);
+        }
+        public void AddOnTakeOffListener(UnityAction<Equipment> listener)
+        {
+            OnTakeOff.AddListener(listener);
+        }
+        public void RemoveOnTakeOffListener(UnityAction<Equipment> listener)
+        {
+            OnTakeOff.RemoveListener(listener);
+        }
 
-    public List<EquipmentSlot> slots = new List<EquipmentSlot>();
-    public EquipmentEvent onEquip, OnTakeOff;
-    public void Equip(Equipment equipment)
-    {
-        foreach (EquipmentSlot slot in slots)
-        {
-            if (slot.isEmpty && slot.type == equipment.type)
-            {
-                equipment.OnEquip(this);
-                onEquip.Invoke(equipment);
-                slot.SetEquipment(equipment);
-                print("equip to empty pos");
-                return;
-            }
-        }
-        foreach (EquipmentSlot slot in slots)
-        {
-            if (slot.type == equipment.type)
-            {
-                print("change equipment");
-                equipment.OnEquip(this);
-                onEquip.Invoke(equipment);
-                slot.SetEquipment(equipment);
-                return;
-            }
-        }
-    }
-    public void TakeOff(Equipment equipment)
-    {
-        foreach (EquipmentSlot slot in slots)
-        {
-            if (slot.m_equipment == equipment)
-            {
-                slot.Clear();
-                OnTakeOff.Invoke(equipment);
-                equipment.OnTakeOff();
-            }
-        }
-    }
-    public Weapon GetWeapon()
-    {
-        foreach (EquipmentSlot slot in slots)
-        {
-            if (slot.type == String.EquipmentType.Weapon && slot.m_equipment != null)
-            {
-                print("get weapon at:" + slot.slot_name +"  ->" +slot.m_equipment);
-                return (Weapon)slot.m_equipment;
-            }
-        }
-        return null;
-    }
-    public String.EquipSlotName GetEquipSlotName(Equipment equipment)
-    {
-        foreach (EquipmentSlot slot in slots)
-        {
-            if (slot.m_equipment == equipment)
-            {
-                return slot.slot_name;
-            }
-        }
-        return String.EquipSlotName.None;
-    }
-    //******************************impl
-    public void AddOnEquipListener(UnityAction<Equipment> listener)
-    {
-        onEquip.AddListener(listener);
-    }
-    public void RemoveOnEquipListener(UnityAction<Equipment> listener)
-    {
-        onEquip.RemoveListener(listener);
-    }
-    public void AddOnTakeOffListener(UnityAction<Equipment> listener)
-    {
-        OnTakeOff.AddListener(listener);
-    }
-    public void RemoveOnTakeOffListener(UnityAction<Equipment> listener)
-    {
-        OnTakeOff.RemoveListener(listener);
-    }
 
-
-}
-[Serializable]
-public class EquipmentSlot
-{
-    public String.EquipSlotName slot_name;
-    public bool isEmpty { get { return m_equipment == null; } }
-    public Transform model_slot;
-    public String.EquipmentType type;
-    [HideInInspector]
-    public Equipment m_equipment;
-    public void SetEquipment(Equipment equipment)
-    {
-        m_equipment = equipment;
-        equipment.BindModel(model_slot);
     }
-    public void Clear()
+    [Serializable]
+    public class EquipmentSlot
     {
-        m_equipment = null;
-    }
-    public bool Equals(EquipmentSlotUI obj)
-    {
-        return obj.slot_name.Equals(slot_name);
+        public String.EquipSlotName slot_name;
+        public bool isEmpty { get { return m_equipment == null; } }
+        public Transform model_slot;
+        public String.EquipmentType type;
+        [HideInInspector]
+        public Equipment m_equipment;
+        public void SetEquipment(Equipment equipment)
+        {
+            m_equipment = equipment;
+            equipment.BindModel(model_slot);
+        }
+        public void Clear()
+        {
+            m_equipment = null;
+        }
+        public bool Equals(EquipmentSlotUI obj)
+        {
+            return obj.slot_name.Equals(slot_name);
+        }
     }
 }

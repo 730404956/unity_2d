@@ -1,4 +1,18 @@
+/*
+ * File: Values.cs
+ * Project/package: Scripts
+ * File Created: Friday, 16th October 2020 12:34:03 pm
+ * Author: Acetering (730404956@qq.com)
+ * -----
+ * Last Modified: Sunday, 17th January 2021 1:57:46 pm
+ * Modified By: Acetering (730404956@qq.com>)
+ * -----
+ * MODIFIED HISTORY:
+ * Time           	By 	Comments
+ * ---------------	---	---------------------------------------------------------
+ */
 using UnityEngine;
+namespace Acetering{
 public class Values
 {
     public static float float_zero { get; } = 0.01f;
@@ -46,4 +60,4 @@ public class String
     {
         Weapon, Body
     }
-}
+}}

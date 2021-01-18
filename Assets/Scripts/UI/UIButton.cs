@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Events;
+namespace Acetering{
 
 public class UIButton : UIBase
 {
@@ -21,4 +22,4 @@ public class UIButton : UIBase
         btn.onClick.AddListener(call);
     }
 
-}
+}}

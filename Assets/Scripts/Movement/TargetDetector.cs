@@ -4,7 +4,7 @@
  * File Created: Thursday, 26th March 2020 6:18:39 pm
  * Author: Acetering (730404956@qq.com)
  * -----
- * Last Modified: Sunday, 6th September 2020 1:56:27 pm
+ * Last Modified: Sunday, 17th January 2021 2:17:08 pm
  * Modified By: Acetering (730404956@qq.com>)
  * -----
  * MODIFIED HISTORY:
@@ -15,8 +15,9 @@ using UnityEngine;
 using UnityEngine.Events;
 using System;
 using System.Collections.Generic;
+namespace Acetering{
 [RequireComponent(typeof(Moveable))]
-public class TargetDetector : MonoBehaviour
+public class TargetDetector : MonoBehaviour, RecycleObjectInitiator
 {
     [Serializable]
     public class OnGetTargetEvent : UnityEvent<Transform> { }
@@ -65,18 +66,36 @@ public class TargetDetector : MonoBehaviour
             foreach (RaycastHit2D hit in hits)
             {
                 //hit something
-                if (hit.collider != null && !ignore_colliders.Contains(hit.collider)&&(aim_tag.Length<=0||hit.collider.gameObject.CompareTag(aim_tag)))
+                if (hit.collider != null && !ignore_colliders.Contains(hit.collider) && (aim_tag.Length <= 0 || hit.collider.gameObject.CompareTag(aim_tag)))
                 {
-                    onGetTarget?.Invoke(hit.collider.gameObject.transform);
-                    this.enabled = false;
+                    TargetLock(hit.collider.gameObject.transform);
                     return;
                 }
             }
 
         }
     }
-    public void SetEnemyLayer(Equipment equipment,IEquipmentGear self) {
-        detect_layerMask = LayerManager.GetOpenetLayer(self.GetActor().GetLayer());
+    private void TargetLock(Transform target)
+    {
+        onGetTarget?.Invoke(target);
+        this.enabled = false;
+
+    }
+    public void SetEnemyLayer(Equipment equipment)
+    {
+        detect_layerMask = LayerManager.GetOpenetLayer(equipment.gear.GetLayer());
         print("detect layer set to :" + detect_layerMask.ToString());
     }
-}
+    public void OnObjectInit()
+    {
+        this.enabled = true;
+    }
+    public void OnObjectCreate(IRecycleObjectFactory factory)
+    {
+
+    }
+    public void OnObjectDestroy()
+    {
+        this.enabled = false;
+    }
+}}

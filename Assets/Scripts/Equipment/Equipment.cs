@@ -4,7 +4,7 @@
  * File Created: Friday, 13th March 2020 1:24:02 pm
  * Author: Acetering (730404956@qq.com)
  * -----
- * Last Modified: Friday, 16th October 2020 12:51:33 pm
+ * Last Modified: Monday, 18th January 2021 11:01:10 pm
  * Modified By: Acetering (730404956@qq.com>)
  * -----
  * MODIFIED HISTORY:
@@ -14,46 +14,56 @@
 using UnityEngine;
 using UnityEngine.Events;
 using System;
-[Serializable]
-public class EquipmentEvent : UnityEvent<Equipment> { };
-
-public abstract class Equipment : MonoBehaviour
+using System.Collections.Generic;
+namespace Acetering
 {
-    [SerializeField]
-    protected EquipmentEvent onEquip, onTakeOff;
-    public String.EquipmentType type;
-    public IEquipmentGear gear;
-    public EquipmentItem item;
+    [Serializable]
+    public class EquipmentEvent : UnityEvent<Equipment> { };
 
-    /// <summary>
-    /// trigger when take on equipment
-    /// </summary>
-    public virtual void OnEquip(IEquipmentGear gear)
+    public class Equipment : MonoBehaviour
     {
-        gameObject.SetActive(true);
-        this.gear = gear;
-        onEquip.Invoke(this);
-    }
-    /// <summary>
-    /// trigger when take off equipment
-    /// </summary>
-    public virtual void OnTakeOff()
-    {
-        onTakeOff.Invoke(this);
-        this.gear = null;
-        gameObject.SetActive(false);
+        [SerializeField]
+        protected EquipmentEvent onEquip, onTakeOff;
+        public String.EquipmentType type;
+        public Damager damager;
+        public IEquipmentGear gear;
+        public EquipmentItem item;
 
-    }
-    public bool BindModel(Transform tf)
-    {
-        if (tf)
+        /// <summary>
+        /// trigger when take on equipment
+        /// </summary>
+        public virtual void OnEquip(IEquipmentGear gear)
         {
-            transform.SetParent(tf);
-            transform.localPosition = Vector2.zero;
-            print("bind model success.");
-            return true;
+            gameObject.SetActive(true);
+            damager = GetComponent<Damager>();
+            if (damager != null)
+            {
+                damager.src = gear;
+            }
+            this.gear = gear;
+            onEquip.Invoke(this);
         }
-        print("bind model failed.");
-        return false;
+        /// <summary>
+        /// trigger when take off equipment
+        /// </summary>
+        public virtual void OnTakeOff()
+        {
+            onTakeOff.Invoke(this);
+            this.gear = null;
+            gameObject.SetActive(false);
+        }
+        public bool BindModel(Transform tf)
+        {
+            if (tf)
+            {
+                transform.SetParent(tf);
+                transform.localPosition = Vector2.zero;
+                transform.localRotation = Quaternion.identity;
+                print("bind model for [" + name + "] success.");
+                return true;
+            }
+            print("bind model failed. No transform for [" + name + "] of type :" + type);
+            return false;
+        }
     }
 }

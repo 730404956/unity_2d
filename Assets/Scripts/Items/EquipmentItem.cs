@@ -1,48 +1,46 @@
 using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.Events;
-public class EquipmentItem : BaseItem
+namespace Acetering
 {
-    public Equipment equipment;
-    private ItemOperation op_equip, op_takeoff;
-    protected override void Awake()
+    public class EquipmentItem : BaseItem
     {
-        base.Awake();
-        op_equip = new ItemOperation("装备", OperationOverTag.Close_Info_After_Op, EquipItem, ChangeOperation);
-        op_takeoff = new ItemOperation("取下", OperationOverTag.Close_Info_After_Op, TakeOffItem, CollectItem, ChangeOperation);
-        if (operations == null)
+        public Equipment equipment;
+        private ItemOperation opt;
+        protected override void Awake()
         {
-            operations = new List<ItemOperation>();
+            base.Awake();
+            opt = new ItemOperation("装备", OperationOverTag.Close_Info_After_Op, 10, EquipItem, ChangeOperation);
+            if (operations == null)
+            {
+                operations = new List<ItemOperation>();
+            }
+            operations.Add(opt);
         }
-        operations.Add(op_equip);
-        for (int i = operations.Count - 1; i > 0; i--)
+        protected void EquipItem(Item item, IActorPart part)
         {
-            operations[i] = operations[i - 1];
+            part.GetGear().Equip(equipment);
         }
-        operations[0] = op_equip;
-    }
-    public void EquipItem(Item item, IActorPart part)
-    {
-        part.GetGear().Equip(equipment);
-    }
-    public void TakeOffItem(Item item, IActorPart part)
-    {
-        part.GetGear().TakeOff(equipment);
-    }
-    public override void DropItem(IBackpack backpack) {
-        TakeOffItem(this,backpack);
-        base.DropItem(backpack);
-    }
+        protected void TakeOffItem(Item item, IActorPart part)
+        {
+            part.GetGear().TakeOff(equipment);
+        }
+        public override void DropItem(IBackpack backpack)
+        {
+            TakeOffItem(this, backpack);
+            base.DropItem(backpack);
+        }
 
-    public void ChangeOperation(Item item, IActorPart part)
-    {
-        if (part.GetGear().GetEquipSlotName(equipment) != String.EquipSlotName.None)
+        public void ChangeOperation(Item item, IActorPart part)
         {
-            operations[0] = op_takeoff;
-        }
-        else
-        {
-            operations[0] = op_equip;
+            if (part.GetGear().GetEquipSlotName(equipment) != String.EquipSlotName.None)
+            {
+                opt.Change("取下", TakeOffItem, ChangeOperation, CollectItem);
+            }
+            else
+            {
+                opt.Change("装备", EquipItem, ChangeOperation);
+            }
         }
     }
 }
